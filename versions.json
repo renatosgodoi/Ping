@@ -1,0 +1,73 @@
+{
+    "latest": "12.2.2",
+    "versions": [
+        {
+            "version": "12.2.2",
+            "preferredShim": "alpine:3.21.3",
+            "shims": [
+                {
+                    "shim": "alpine:3.21.3",
+                    "preferredJVM": "al17",
+                    "jvms": [
+                        {
+                            "jvm": "al17",
+                            "build": true,
+                            "deploy": true,
+                            "registries": [
+                                "DockerHub"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "shim": "redhat/ubi9-minimal:9.5-1739420147",
+                    "preferredJVM": "rl17",
+                    "jvms": [
+                        {
+                            "jvm": "rl17",
+                            "build": true,
+                            "deploy": true,
+                            "registries": [
+                                "DockerHub"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "version": "12.1.7",
+            "preferredShim": "alpine:3.21.3",
+            "shims": [
+                {
+                    "shim": "alpine:3.21.3",
+                    "preferredJVM": "al17",
+                    "jvms": [
+                        {
+                            "jvm": "al17",
+                            "build": true,
+                            "deploy": true,
+                            "registries": [
+                                "DockerHub"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "shim": "redhat/ubi9-minimal:9.5-1739420147",
+                    "preferredJVM": "rl17",
+                    "jvms": [
+                        {
+                            "jvm": "rl17",
+                            "build": true,
+                            "deploy": true,
+                            "registries": [
+                                "DockerHub"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

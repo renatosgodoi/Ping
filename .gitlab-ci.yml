@@ -1,0 +1,175 @@
+################################################
+#                  BUILD
+################################################
+
+intel.b.pingfederate:
+  stage: products
+  script:
+    - ci_scripts/build_product.sh --product pingfederate
+  rules:
+    - if: $ARCHIVE_PIPELINE == "true"
+      when: never
+    - if: $CUSTOM_IMAGE_PIPELINE == "true"
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[skip build\]|\[skip products\]/i'
+      when: never
+    - if: '$BUILD_PRODUCT != null && $BUILD_PRODUCT =~ /(?:^|,)pingfederate(?:$|,)/i'
+      when: on_success
+    - if: '$BUILD_PRODUCT != null'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE =~ /^push$/'
+      changes:
+        - pingfederate/**/*
+        - pingbase/**/*
+        - pingcommon/**/*
+        - pingdatacommon/**/*
+        - pingaccess/**/*
+        - pingdirectory/**/*
+        - pingintelligence/**/*
+        - integration_tests/**/*
+        - ci_scripts/*
+        - pingjvm/*
+        - .gitlab-ci.yml
+        - helm-tests/smoke-tests/pingfederate/*
+        - helm-tests/integration-tests/**/*
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE =~ /^schedule$|^web$/'
+      when: on_success
+
+arm.b.pingfederate:
+  stage: products
+  image: $RUNNER_IMAGE_AARCH64
+  #image: $RUNNER_IMAGE_AARCH64_TEST
+  tags:
+    - platform=aarch64
+  script:
+    - ci_scripts/build_product.sh --product pingfederate
+  rules:
+    - if: $ARCHIVE_PIPELINE == "true"
+      when: never
+    - if: $CUSTOM_IMAGE_PIPELINE == "true"
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[skip build\]|\[skip products\]/i'
+      when: never
+    - if: '$BUILD_PRODUCT != null && $BUILD_PRODUCT =~ /(?:^|,)pingfederate(?:$|,)/i'
+      when: on_success
+    - if: '$BUILD_PRODUCT != null'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE =~ /^push$/'
+      changes:
+        - pingfederate/**/*
+        - pingbase/**/*
+        - pingcommon/**/*
+        - pingdatacommon/**/*
+        - pingaccess/**/*
+        - pingdirectory/**/*
+        - pingintelligence/**/*
+        - integration_tests/**/*
+        - ci_scripts/*
+        - pingjvm/*
+        - .gitlab-ci.yml
+        - helm-tests/smoke-tests/pingfederate/*
+        - helm-tests/integration-tests/**/*
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE =~ /^schedule$|^web$/'
+      when: on_success
+
+################################################
+#                  SMOKE TESTS
+################################################
+
+intel.t.pingfederate:
+  stage: test.smoke
+  script:
+    - ci_scripts/run_helm_smoke.sh --product pingfederate
+  retry: 2
+  rules:
+    - if: $ARCHIVE_PIPELINE == "true"
+      when: never
+    - if: $CUSTOM_IMAGE_PIPELINE == "true"
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[skip build\]|\[skip products\]|\[skip tests\]|\[skip smoke\]/i'
+      when: never
+    - if: '$BUILD_PRODUCT != null && $BUILD_PRODUCT =~ /(?:^|,)pingfederate(?:$|,)/i'
+      when: on_success
+    - if: '$BUILD_PRODUCT != null'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE =~ /^push$/'
+      changes:
+        - pingfederate/**/*
+        - pingcommon/**/*
+        - pingbase/**/*
+        - ci_scripts/*
+        - pingjvm/*
+        - .gitlab-ci.yml
+        - helm-tests/smoke-tests/pingfederate/*
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE =~ /^schedule$|^web$/'
+      when: on_success
+
+arm.t.pingfederate:
+  stage: test.smoke
+  image: $RUNNER_IMAGE_AARCH64
+  #image: $RUNNER_IMAGE_AARCH64_TEST
+  tags:
+    - platform=aarch64
+  script:
+    - ci_scripts/run_helm_smoke.sh --product pingfederate
+  retry: 2
+  rules:
+    - if: $ARCHIVE_PIPELINE == "true"
+      when: never
+    - if: $CUSTOM_IMAGE_PIPELINE == "true"
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[skip build\]|\[skip products\]|\[skip tests\]|\[skip smoke\]/i'
+      when: never
+    - if: '$BUILD_PRODUCT != null && $BUILD_PRODUCT =~ /(?:^|,)pingfederate(?:$|,)/i'
+      when: on_success
+    - if: '$BUILD_PRODUCT != null'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE =~ /^push$/'
+      changes:
+        - pingfederate/**/*
+        - pingcommon/**/*
+        - pingbase/**/*
+        - ci_scripts/*
+        - pingjvm/*
+        - .gitlab-ci.yml
+        - helm-tests/smoke-tests/pingfederate/*
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE =~ /^schedule$|^web$/'
+      when: on_success
+
+################################################
+#                  DEPLOY
+################################################
+
+d.pingfederate:
+  stage: deploy
+  script:
+    - ci_scripts/deploy_product_to_registry.sh --product pingfederate
+    - ci_scripts/deploy_manifests_to_registry.sh --product pingfederate
+  rules:
+    - if: $ARCHIVE_PIPELINE == "true"
+      when: never
+    - if: $CUSTOM_IMAGE_PIPELINE == "true"
+      when: never
+    - if: '$CI_COMMIT_MESSAGE =~ /\[skip build\]|\[skip products\]|\[skip deploy\]/i'
+      when: never
+    - if: '$BUILD_PRODUCT != null && $BUILD_PRODUCT =~ /(?:^|,)pingfederate(?:$|,)/i'
+      when: on_success
+    - if: '$BUILD_PRODUCT != null'
+      when: never
+    - if: '$PING_IDENTITY_SNAPSHOT =~ /--snapshot/'
+      when: never
+    - if: '$CI_COMMIT_REF_NAME =~ /^master$/'
+      changes:
+        - pingfederate/**/*
+        - pingcommon/**/*
+        - pingbase/**/*
+        - ci_scripts/*
+        - pingjvm/*
+        - .gitlab-ci.yml
+      when: on_success
+    - if: '$CI_COMMIT_TAG =~ /^\d{4}\.?\d*/'
+      when: on_success
